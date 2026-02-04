@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>My Valentine ❤️</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    width: 92%;
+    max-width: 420px;
+    background: white;
+    border-radius: 22px;
+    padding: 26px 22px 60px;
+    text-align: center;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+    animation: fadeUp 0.7s ease;
+    position: relative;
+}
+
+.hidden { display: none; }
+
+@keyframes fadeUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+h1, h2 {
+    color: #ff3366;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 25px;
+}
+
+button {
+    font-size: 1.05rem;
+    padding: 14px 28px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+}
+
+#yes {
+    background: #ff3366;
+    color: white;
+}
+
+#no {
+    background: #ddd;
+    color: #444;
+}
+
+#noMessage {
+    margin-top: 14px;
+    min-height: 22px;
+    opacity: 0.7;
+}
+
+/* Quiz */
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.options button {
+    background: #ff3366;
+    color: white;
+}
+
+/* Footer */
+footer {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    color: #ff3366;
+}
+
+/* Hearts */
+.heart {
+    position: fixed;
+    font-size: 16px;
+    animation: floatUp 6s linear;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- QUESTION -->
+<div class="container" id="questionBox">
+    <h1>Hey Silvy ❤️</h1>
+    <p>Will you be my Valentine?</p>
+
+    <div class="buttons">
+        <button id="yes">Yes 💖</button>
+        <button id="no">No 😌</button>
+    </div>
+
+    <p id="noMessage"></p>
+
+    <footer>I love you ❤️ </footer>
+</div>
+
+<!-- MESSAGE -->
+<div class="container hidden" id="messageBox">
+    <h2>Just us 💕</h2>
+    <p id="typeText"></p>
+    <p id="tapHint" style="opacity:0.6;margin-top:14px;display:none;">
+        Tap anywhere to continue
+    </p>
+    <footer>I love you ❤️ </footer>
+</div>
+
+<!-- QUIZ -->
+<div class="container hidden" id="quizBox">
+    <h2 id="quizQuestion"></h2>
+    <div class="options" id="quizOptions"></div>
+    <footer>I love you ❤️ </footer>
+</div>
+
+<!-- FINAL ASK -->
+<div class="container hidden" id="askBox">
+    <h2>One more thing… 💕</h2>
+    <p>
+        Will you go out on a proper date with me again?<br>
+        No reason. Just us. 🌹
+    </p>
+    <button id="sendWhatsApp">Ask on WhatsApp 💌</button>
+    <footer>I love you ❤️ </footer>
+</div>
+
+<script>
+const HER_NAME = "Silvy";
+const YOUR_NAME = "Bhuvan";
+const WHATSAPP_NUMBER = "919877961640";
+
+/* YES / NO logic */
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const noMsg = document.getElementById("noMessage");
+
+const noMessages = [
+    "Nope 😌",
+    "Try again 👀",
+    "Are you serious? 😂",
+    "That button is getting weaker 😏",
+    "Hmm… interesting choice 🤨",
+    "Okay! Stop 😭",
+    "Stopp 😭",
+    "Stooppppp😭",
+    "Staawwwpppp 😭",
+    "That's it, I'll Cry Noww 😭",
+    "SSSTTTAAAAAWAWWWPPPPPP 😭",
+];
+
+let noClicks = 0;
+let yesScale = 1;
+let noScale = 1;
+
+noBtn.onclick = () => {
+    noClicks++;
+
+    yesScale += 0.12;
+    noScale -= 0.08;
+
+    yesBtn.style.transform = `scale(${yesScale})`;
+    noBtn.style.transform = `scale(${Math.max(noScale, 0.5)})`;
+
+    noMsg.innerText = noMessages[noClicks % noMessages.length];
+
+    if (navigator.vibrate) {
+        navigator.vibrate([200, 80, 200]);
+    }
+};
+
+/* Typewriter */
+const messageLines = [
+    "I know we already chose each other,",
+    "but I still love doing things like this for you.",
+    "",
+    "You’re my comfort, my favourite person,",
+    "and my best decision every day. ❤️"
+];
+
+let lineIndex = 0;
+let charIndex = 0;
+
+function startTyping() {
+    const el = document.getElementById("typeText");
+    const hint = document.getElementById("tapHint");
+
+    if (lineIndex < messageLines.length) {
+        if (charIndex < messageLines[lineIndex].length) {
+            el.innerHTML += messageLines[lineIndex].charAt(charIndex);
+            charIndex++;
+            setTimeout(startTyping, 40);
+        } else {
+            el.innerHTML += "<br>";
+            charIndex = 0;
+            lineIndex++;
+            setTimeout(startTyping, 400);
+        }
+    } else {
+        hint.style.display = "block";
+    }
+}
+
+/* YES flow */
+yesBtn.onclick = () => {
+    document.getElementById("questionBox").classList.add("hidden");
+
+    const msg = document.getElementById("messageBox");
+    msg.classList.remove("hidden");
+
+    document.getElementById("typeText").innerHTML = "";
+    document.getElementById("tapHint").style.display = "none";
+    lineIndex = 0;
+    charIndex = 0;
+
+    if (navigator.vibrate) navigator.vibrate([120,60,160]);
+    startTyping();
+
+    msg.onclick = () => {
+        if (lineIndex >= messageLines.length) {
+            msg.classList.add("hidden");
+            startQuiz();
+        }
+    };
+};
+
+/* Quiz */
+const questions = [
+    "What do you love most about us?",
+    "What do you love doing with me most…",
+    "One thing I do that makes you feel LOVED?",
+    "If today was just for us, we’d…",
+    "Who’s more in love? 😏"
+];
+
+const options = [
+    ["How easy it feels ❤️","Our laughs 😄","The comfort 🥰","Everything 😌"],
+    ["Talking endlessly 💬","Eating 🍕","Laughing at nothing 😂","The S** Word 😂","All of this"],
+    ["Listening ❤️","Being there 🫶","Making you laugh 😄","All of it","Nothing 🙄"],
+    ["Go out 🌆","Stay in 🛋️","Do something random 😄","Just be together"],
+    ["You 🙄","Me 😌","Both equally ❤️","OR Me 😏"]
+];
+
+let qi = 0;
+let answers = [];
+
+function startQuiz() {
+    document.getElementById("quizBox").classList.remove("hidden");
+    showQuestion();
+}
+
+function showQuestion() {
+    document.getElementById("quizQuestion").innerText = questions[qi];
+    const box = document.getElementById("quizOptions");
+    box.innerHTML = "";
+
+    options[qi].forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => {
+            answers.push(`${questions[qi]} → ${opt}`);
+            qi++;
+            qi < questions.length ? showQuestion() : finishQuiz();
+        };
+        box.appendChild(btn);
+    });
+}
+
+function finishQuiz() {
+    document.getElementById("quizBox").classList.add("hidden");
+    document.getElementById("askBox").classList.remove("hidden");
+}
+
+/* WhatsApp */
+document.getElementById("sendWhatsApp").onclick = () => {
+    const msg =
+`Hey ${HER_NAME} ❤️
+
+You just completed my Valentine thing 😌
+
+${answers.join("\n")}
+
+So… date? 🌹
+I love you.
+— ${YOUR_NAME}`;
+
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`);
+};
+
+/* Hearts */
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+}, 900);
+</script>
+
+</body>
+</html>
