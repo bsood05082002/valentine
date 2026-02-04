@@ -268,7 +268,7 @@ function startTyping() {
             if (charIndex < messageLines[lineIndex].length) {
                 el.innerHTML += messageLines[lineIndex].charAt(charIndex);
                 charIndex++;
-                setTimeout(typeNext, 40);
+                setTimeout(typeNext, 80);
             } else {
                 el.innerHTML += "<br>";
                 charIndex = 0;
@@ -390,5 +390,6 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
