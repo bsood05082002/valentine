@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Be My Valentine 💖</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff4e50, #f9d423);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    width: 92%;
+    max-width: 420px;
+    background: #fff;
+    padding: 26px 20px;
+    border-radius: 22px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    animation: pop 0.7s ease;
+}
+
+.hidden { display: none; }
+
+@keyframes pop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+h1, h2 {
+    color: #ff3366;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+/* Buttons */
+.buttons {
+    position: relative;
+    height: 140px;
+    margin-top: 20px;
+}
+
+button {
+    font-size: 1.1rem;
+    padding: 14px 28px;
+    border-radius: 35px;
+    border: none;
+    cursor: pointer;
+}
+
+#yes {
+    background: #ff3366;
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    transform: translateX(-110%);
+}
+
+#no {
+    background: #ddd;
+    color: #444;
+    position: absolute;
+    left: 50%;
+    top: 70px;
+    transform: translateX(10%);
+    transition: transform 0.25s ease;
+}
+
+/* Quiz */
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.options button {
+    background: #ff3366;
+    color: white;
+}
+
+/* Hearts */
+.heart {
+    position: fixed;
+    font-size: 18px;
+    animation: floatUp 6s linear;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
+}
+
+/* Easter Egg */
+</style>
+</head>
+
+<body>
+
+<!-- QUESTION -->
+<div class="container" id="questionBox">
+    <h1 id="mainText"></h1>
+    <div class="buttons">
+        <button id="yes">Yes 💖</button>
+        <button id="no">No 😢</button>
+    </div>
+</div>
+
+<!-- MESSAGE -->
+<div class="container hidden" id="finalBox">
+    <h2>Hey Silvy ❤️</h2>
+    <p id="personalMessage"></p>
+    <p style="opacity:0.7;margin-top:12px;">Tap anywhere to continue 💕</p>
+</div>
+
+<!-- QUIZ -->
+<div class="container hidden" id="quizBox">
+    <h2 id="quizQuestion"></h2>
+    <div class="options" id="quizOptions"></div>
+</div>
+
+<!-- ASK -->
+<div class="container hidden" id="askBox">
+    <h2>So… 💕</h2>
+    <p>Will you go out on a proper date with me? 🌹</p>
+    <button id="sendWhatsApp">Ask on WhatsApp 💌</button>
+</div>
+
+<script>
+const HER_NAME = "Silvy";
+const YOUR_NAME = "Bhuvan";
+const WHATSAPP_NUMBER = "919877961640";
+
+document.getElementById("mainText").innerText =
+`Hey ${HER_NAME} 💕\nWill you be my Valentine?`;
+
+document.getElementById("personalMessage").innerText =
+`${HER_NAME}, I made this just for you.
+You’re my comfort, my chaos, my calm.
+I already have you… but I still choose you every day ❤️`;
+
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+
+let noX = 10, noY = 70;
+
+/* NO button – playful but slow */
+function moveNo() {
+    noX += (Math.random() * 120 - 60);
+    noY += (Math.random() * 80 - 40);
+
+    noX = Math.max(-220, Math.min(180, noX));
+    noY = Math.max(80, Math.min(150, noY));
+
+    noBtn.style.transform = `translate(${noX}%, ${noY}px) scale(0.95)`;
+}
+
+noBtn.addEventListener("touchstart", moveNo);
+noBtn.addEventListener("mouseover", moveNo);
+
+/* YES */
+yesBtn.onclick = () => {
+    document.getElementById("questionBox").classList.add("hidden");
+    const fb = document.getElementById("finalBox");
+    fb.classList.remove("hidden");
+    if (navigator.vibrate) navigator.vibrate([100,50,150]);
+
+    fb.onclick = () => {
+        fb.classList.add("hidden");
+        startQuiz();
+    };
+};
+
+/* QUIZ */
+const questions = [
+    "Who annoys who more? 😏",
+    "Our best activity together?",
+    "Your favorite thing about me?",
+    "Where should we go next?"
+];
+
+const options = [
+    ["You 😌","Me 😇","Both 😂"],
+    ["Talking 💬","Eating 🍕","Doing nothing ❤️"],
+    ["Smile 😊","Care 💕","Everything 😌"],
+    ["Coffee ☕","Drive 🚗","Anywhere with you"]
+];
+
+let qi = 0, answers = [];
+
+function startQuiz() {
+    document.getElementById("quizBox").classList.remove("hidden");
+    showQ();
+}
+
+function showQ() {
+    document.getElementById("quizQuestion").innerText = questions[qi];
+    const box = document.getElementById("quizOptions");
+    box.innerHTML = "";
+
+    options[qi].forEach(opt => {
+        const b = document.createElement("button");
+        b.innerText = opt;
+        b.onclick = () => {
+            answers.push(`${questions[qi]} → ${opt}`);
+            qi++;
+            qi < questions.length ? showQ() : finishQuiz();
+        };
+        box.appendChild(b);
+    });
+}
+
+function finishQuiz() {
+    document.getElementById("quizBox").classList.add("hidden");
+    document.getElementById("askBox").classList.remove("hidden");
+}
+
+/* WhatsApp */
+document.getElementById("sendWhatsApp").onclick = () => {
+    const text =
+`Hey ${HER_NAME} 💖
+
+You survived my Valentine website 😌
+
+${answers.join("\n")}
+
+So… date? 🌹
+— ${YOUR_NAME}`;
+
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`);
+};
+
+/* Hearts */
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+}, 900);
+
+/* Easter Egg – 7 taps */
+
+</script>
+
+</body>
+
+</html>
