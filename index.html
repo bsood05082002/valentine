@@ -34,6 +34,14 @@ body {
     position: relative;
 }
 
+.scrollable {
+    max-height: 80vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 80px;
+}
+
+
 .hidden { display: none; }
 
 @keyframes fadeUp {
@@ -80,7 +88,7 @@ button {
 #noMessage {
     margin-top: 14px;
     min-height: 22px;
-    opacity: 0.7;
+    opacity: 0.9;
 }
 
 /* Quiz */
@@ -120,6 +128,8 @@ footer {
     from { transform: translateY(100vh); }
     to { transform: translateY(-10vh); }
 }
+
+
 </style>
 </head>
 
@@ -141,7 +151,7 @@ footer {
 </div>
 
 <!-- MESSAGE -->
-<div class="container hidden" id="messageBox">
+<div class="container hidden scrollable" id="messageBox">
     <h2>Just us 💕</h2>
     <p id="typeText"></p>
     <p id="tapHint" style="opacity:0.6;margin-top:14px;display:none;">
@@ -193,8 +203,8 @@ const noMessages = [
 ];
 
 let noClicks = 0;
-let yesScale = 1;
-let noScale = 1;
+let yesScale = 1.5;
+let noScale = 1.5;
 
 noBtn.onclick = () => {
     noClicks++;
@@ -203,7 +213,7 @@ noBtn.onclick = () => {
     noScale -= 0.08;
 
     yesBtn.style.transform = `scale(${yesScale})`;
-    noBtn.style.transform = `scale(${Math.max(noScale, 0.5)})`;
+    noBtn.style.transform = `scale(${Math.max(noScale, 0.2)})`;
 
     noMsg.innerText = noMessages[noClicks % noMessages.length];
 
@@ -218,30 +228,60 @@ const messageLines = [
     "but I still love doing things like this for you.",
     "",
     "You’re my comfort, my favourite person,",
-    "and my best decision every day. ❤️"
+    "and my best decision every day. ❤️",
+    "I want to spend all my valentines with 3 people",
+    "YOU",
+    "............",
+    "YOU",
+    "and",
+    "............",
+    "Yesssssssssss YOU ❤️❤️❤️",
+    "I know i don't say it enough, but",
+    "I LOVE YOU, more than anything", "WELL",
+    "I like money too",
+    "But i love YOU moreeeeeeeee  ❤️",
+    "I hope you get everything you wish for and more",
+    "This is the first time I am doing something like this for someone so i dont know how to add other emojis ",
+    "So....",
+    "Let's just give each other looooooooottttttttsssss of Hugs and Kisses in person  ❤️",
+    "This is not a gift, just something you can take home and keep with You forever ❤️❤️❤️❤️",
+    "Hope you like it",
+    "",
+    "Let's answer a few questions now",
 ];
 
-let lineIndex = 0;
-let charIndex = 0;
+let typingFinished = false;
 
 function startTyping() {
     const el = document.getElementById("typeText");
     const hint = document.getElementById("tapHint");
 
-    if (lineIndex < messageLines.length) {
-        if (charIndex < messageLines[lineIndex].length) {
-            el.innerHTML += messageLines[lineIndex].charAt(charIndex);
-            charIndex++;
-            setTimeout(startTyping, 40);
+    typingFinished = false;
+    el.innerHTML = "";
+    hint.style.display = "none";
+
+    let lineIndex = 0;
+    let charIndex = 0;
+
+    function typeNext() {
+        if (lineIndex < messageLines.length) {
+            if (charIndex < messageLines[lineIndex].length) {
+                el.innerHTML += messageLines[lineIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(typeNext, 40);
+            } else {
+                el.innerHTML += "<br>";
+                charIndex = 0;
+                lineIndex++;
+                setTimeout(typeNext, 300);
+            }
         } else {
-            el.innerHTML += "<br>";
-            charIndex = 0;
-            lineIndex++;
-            setTimeout(startTyping, 400);
+            typingFinished = true;
+            hint.style.display = "block";
         }
-    } else {
-        hint.style.display = "block";
     }
+
+    typeNext();
 }
 
 /* YES flow */
@@ -259,13 +299,18 @@ yesBtn.onclick = () => {
     if (navigator.vibrate) navigator.vibrate([120,60,160]);
     startTyping();
 
-    msg.onclick = () => {
-        if (lineIndex >= messageLines.length) {
-            msg.classList.add("hidden");
-            startQuiz();
-        }
-    };
-};
+let allowContinue = false;
+
+function enableContinue() {
+    allowContinue = true;
+}
+
+msg.addEventListener("click", () => {
+    if (!typingFinished) return;
+
+    msg.classList.add("hidden");
+    startQuiz();
+});};
 
 /* Quiz */
 const questions = [
@@ -273,7 +318,8 @@ const questions = [
     "What do you love doing with me most…",
     "One thing I do that makes you feel LOVED?",
     "If today was just for us, we’d…",
-    "Who’s more in love? 😏"
+    "Who’s more in love? 😏",
+    "What’s your favorite way I make you melt?"
 ];
 
 const options = [
@@ -282,6 +328,7 @@ const options = [
     ["Listening ❤️","Being there 🫶","Making you laugh 😄","All of it","Nothing 🙄"],
     ["Go out 🌆","Stay in 🛋️","Do something random 😄","Just be together"],
     ["You 🙄","Me 😌","Both equally ❤️","OR Me 😏"]
+    ["The way you look at me 😌","Your words 🫶","Your touch 🤍","You know exactly what you’re doing 😏"]
 ];
 
 let qi = 0;
@@ -343,3 +390,4 @@ setInterval(() => {
 
 </body>
 </html>
+
