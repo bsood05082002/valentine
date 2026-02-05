@@ -128,12 +128,53 @@ footer {
     from { transform: translateY(100vh); }
     to { transform: translateY(-10vh); }
 }
+/* Background image for last screen */
+#askBox {
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)),
+        url("img.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
+#askBox h2,
+#askBox p {
+    text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Running Timer */
+#loveTimer {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.85);
+    padding: 10px 16px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    text-align: center;
+    z-index: 9999;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    color: #ff3366;
+    backdrop-filter: blur(6px);
+}
+
+#timerText {
+    font-weight: 600;
+}
 
 </style>
 </head>
 
 <body>
+
+    <!-- RELATIONSHIP TIMER -->
+<div id="loveTimer">
+    ⏳ Since we first talked:<br>
+    <span id="timerText">Loading...</span>
+</div>
+
 
 <!-- QUESTION -->
 <div class="container" id="questionBox">
@@ -418,6 +459,47 @@ playBtn.onclick = () => {
         playBtn.innerText = "▶ Shuru Kia Jae 🎵";
     }
 };
+
+// 🔴 SET THE DATE & TIME YOU FIRST STARTED TALKING
+const startDate = new Date("2023-08-05T10:34:00"); 
+function updateLoveTimer() {
+    const now = new Date();
+
+    let years = now.getFullYear() - startDate.getFullYear();
+    let months = now.getMonth() - startDate.getMonth();
+    let days = now.getDate() - startDate.getDate();
+    let hours = now.getHours() - startDate.getHours();
+    let minutes = now.getMinutes() - startDate.getMinutes();
+    let seconds = now.getSeconds() - startDate.getSeconds();
+
+    if (seconds < 0) {
+        seconds += 60;
+        minutes--;
+    }
+    if (minutes < 0) {
+        minutes += 60;
+        hours--;
+    }
+    if (hours < 0) {
+        hours += 24;
+        days--;
+    }
+    if (days < 0) {
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+        months--;
+    }
+    if (months < 0) {
+        months += 12;
+        years--;
+    }
+
+    document.getElementById("timerText").innerText =
+        `${years}y ${months}m ${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+updateLoveTimer();
+setInterval(updateLoveTimer, 1000);
 
 </script>
 
