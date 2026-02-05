@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>My Valentine ❤️</title>
+<title>Silvy's Valentine ❤️</title>
 
 <style>
 * {
@@ -170,14 +170,38 @@ footer {
 <!-- FINAL ASK -->
 <div class="container hidden" id="askBox">
     <h2>One more thing… 💕</h2>
+
     <p>
-        Will you go out on a proper date with me again?<br>
-        No reason. Just us. 🌹
+        Before anything else,<br>
+        there’s a song for you ❤️
     </p>
+
+    <!-- PLAY BUTTON -->
+    <button id="playSong" style="
+        margin: 18px 0;
+        background: #ff3366;
+        color: white;
+        padding: 14px 26px;
+        border-radius: 30px;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+    ">
+        ▶ Play Song 🎵
+    </button>
+
+    <!-- AUDIO -->
+    <audio id="loveSong" src="songfordate.mp3"></audio>
+
+    <p style="margin-top:16px;">
+        Will you go out on a proper date with me again?<br>
+        Just us. 🌹
+    </p>
+
     <button id="sendWhatsApp">Ask on WhatsApp 💌</button>
+
     <footer>I love you ❤️ </footer>
 </div>
-
 <script>
 const HER_NAME = "Silvy";
 const YOUR_NAME = "Bhuvan";
@@ -268,7 +292,7 @@ function startTyping() {
             if (charIndex < messageLines[lineIndex].length) {
                 el.innerHTML += messageLines[lineIndex].charAt(charIndex);
                 charIndex++;
-                setTimeout(typeNext, 80);
+                setTimeout(typeNext, 50);
             } else {
                 el.innerHTML += "<br>";
                 charIndex = 0;
@@ -364,12 +388,7 @@ function finishQuiz() {
 /* WhatsApp */
 document.getElementById("sendWhatsApp").onclick = () => {
     const msg =
-`Hey ${HER_NAME} ❤️
-
-You just completed my Valentine thing 😌
-
-${answers.join("\n")}
-
+` ❤️
 So… date? 🌹
 I love you.
 — ${YOUR_NAME}`;
@@ -386,10 +405,21 @@ setInterval(() => {
     document.body.appendChild(h);
     setTimeout(() => h.remove(), 6000);
 }, 900);
+
+const playBtn = document.getElementById("playSong");
+const song = document.getElementById("loveSong");
+
+playBtn.onclick = () => {
+    if (song.paused) {
+        song.play();
+        playBtn.innerText = "⏸ Chal Bs Kr";
+    } else {
+        song.pause();
+        playBtn.innerText = "▶ Shuru Kia Jae 🎵";
+    }
+};
+
 </script>
 
 </body>
 </html>
-
-
-
